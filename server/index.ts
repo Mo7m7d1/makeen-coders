@@ -1,5 +1,10 @@
 import express, { RequestHandler } from "express";
-import { memoryDb } from "./datastore//index";
+import {
+	createPost,
+	deletePost,
+	getPost,
+	listPosts,
+} from "./controllers/PostController";
 
 const app = express();
 app.use(express.json());
@@ -15,26 +20,12 @@ const requestMiddlewareLogger: RequestHandler = (req, _, next) => {
 
 app.use(requestMiddlewareLogger);
 
-app.get("/posts", (_, res) => {
-	return res.json({ posts: memoryDb.listPosts() });
-});
+app.get("/posts", listPosts);
 
-app.get("/posts/:id", (req, res) => {
-	const id = req.params?.id;
-	const post = memoryDb.getPost(id);
-	return res.json({ post });
-});
+app.get("/posts/:id", getPost);
 
-app.post("/posts", (req, res) => {
-	const body = req.body;
-	memoryDb.createPost(body);
-	return res.sendStatus(200);
-});
+app.post("/posts", createPost);
 
-app.delete("/posts/:id", (req, res) => {
-	const id = req.params?.id;
-	memoryDb.deletePost(id);
-	return res.sendStatus(200);
-});
+app.delete("/posts/:id", deletePost);
 
 app.listen(3001);
